@@ -117,6 +117,14 @@
         event.preventDefault();
         const formData = new FormData(event.target);
         console.log(...formData);
+        const title = formData.get("title");
+        const content = formData.get("content");
+        const { data, error } = await sb
+          .from("posts")
+          .insert([{ title, content }]);
+        //   .select();
+        if (error) console.log("error", error);
+        console.log("data", data);
       });
     </script>
   </body>
