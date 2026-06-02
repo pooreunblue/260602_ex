@@ -44,7 +44,7 @@
         <button>로그인</button>
       </form>
     </details>
-    <details open>
+    <details>
       <summary>게시글 작성</summary>
       <form id="writeForm">
         <label>
@@ -58,6 +58,10 @@
         <button>작성</button>
         <!-- createdAt, userId는 자동으로 들어갈 예정 -->
       </form>
+    </details>
+    <details open>
+        <h1>게시글 목록</h1>
+        <section id="postContainer"></section>
     </details>
     <script>
       //   console.log(window.supabase);
@@ -124,8 +128,34 @@
           .insert([{ title, content }]);
         //   .select();
         if (error) console.log("error", error);
-        console.log("data", data);
+        // console.log("data", data);
+        await renderPosts();
       });
+
+      const postContainer = document.querySelector("#postContainer");
+      document.addEventListener("DOMContentLoaded", async () => {
+        console.log("DOMContentLoaded");
+        await renderPosts();
+        console.log("화면 렌더링 완료");
+      });
+
+      async function renderPosts() {
+        const { data, error } = await sb.from("posts").select("*");
+        if (error) console.log("error", error);
+        console.log("data", data);
+        postContainer.innerHTML = "";
+        for (const v of data) {
+            console.log(v)
+            const post = document.createElement("div");
+            post.innerHTML = `
+                    <h3>${v.title}</h3>
+                    <p>작성일시: ${v.created_at}</p>
+                    <p>작성자: ${v.user_id}</p>
+                    <p>${v.content}</p>
+                `;
+            postContainer.append(post);
+        }
+      }
     </script>
   </body>
 </html>
